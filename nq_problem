@@ -1,0 +1,61 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+void calculate(vector<int>v){
+    int sum=0;
+    if(v.size()==4) {
+        for (int val: v)
+            sum += val;
+        if (sum == 30) {
+            for (int val: v)
+                cout << val << " ";
+            cout << endl;
+        }
+        return;
+    }
+    for(int i=0; i<=9;++i){
+        v.push_back(i);
+        calculate(v);
+        v.pop_back();
+    }
+}
+const int Row_Size=8,Column_Size=8;
+bool isSafe(int Board [Row_Size][Column_Size], int row, int column){
+    for(int i=0;i<Column_Size;++i)
+        if(Board[row][i])
+            return false;
+    for(int i=row,j=column;i>=0&&j>=0;i--,j--)
+        if(Board[i][j])
+            return false;
+    for(int i=row,j=column;i<Row_Size&&j>=0;i++,j--)
+        if(Board[i][j])
+            return false;
+    return true;
+}
+bool Solve_NQ(int Board [Row_Size][Column_Size], int column){
+    if(column>=Column_Size)
+        return true;
+    for(int i=0;i<Column_Size;++i)
+        if(isSafe(Board,i,column)){
+            Board[i][column]=1;
+            if(Solve_NQ(Board,column+1))
+                return true;
+            Board[i][column]=0;
+        }
+    return false;
+}
+int main() {
+    vector <int> pass;
+    calculate(pass);
+    int Board [Row_Size][Column_Size]={0};
+    if(Solve_NQ(Board,0)){
+        for(int row=0; row < Row_Size; ++row) {
+            for (int column = 0; column < Column_Size; ++column)
+                cout << Board[row][column] << ' ';
+            cout<<endl;
+        }
+        return 0;
+    }
+    cout<<"No solution for this board :(";
+    return 0;
+}
